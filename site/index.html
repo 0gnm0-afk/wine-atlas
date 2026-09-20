@@ -7,7 +7,7 @@
   <meta name="description" content="와인 라벨의 산지명을 찾아 위치, 환경, 주요 포도와 와인 성격을 빠르게 확인하는 지도.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23712850'/%3E%3Cpath d='M8 7h16l-3 12h-4v6h5v2H10v-2h5v-6h-4z' fill='white'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="vendor/leaflet.css">
-  <link rel="stylesheet" href="style.css?v=plain-language-1">
+  <link rel="stylesheet" href="style.css?v=label-scan-2a">
 </head>
 <body>
   <header>
@@ -22,6 +22,7 @@
         <h1>어디서 온<br>와인일까?</h1>
         <p class="lede">라벨에 적힌 산지를 검색하면 위치와 맛의 이유를 한 번에 보여줍니다.</p>
       </div>
+      <button id="open-label-scan" class="scan-primary" type="button">와인 뒷라벨 촬영</button>
       <label for="region-search">산지명 검색</label>
       <input id="region-search" type="search" placeholder="예: 샴페인, Napa, 바로사" autocomplete="off">
       <label for="region-select">또는 목록에서 선택</label>
@@ -52,11 +53,38 @@
 
     <article id="detail" class="detail" aria-live="polite"></article>
   </main>
+  <dialog id="label-scan" aria-labelledby="scan-title" aria-describedby="scan-privacy">
+    <div class="scan-heading"><h2 id="scan-title">와인 뒷라벨 촬영</h2><button id="scan-close" type="button" aria-label="촬영 화면 닫기">닫기</button></div>
+    <p id="scan-privacy">사진과 읽은 글자는 이 브라우저 안에서만 처리합니다. 서버로 보내거나 브라우저에 영구 저장하지 않으며, 취소하거나 닫으면 지웁니다.</p>
+    <p class="scan-hint">밝은 곳에서 뒷라벨의 글자가 크게 보이도록 찍어 주세요.</p>
+    <div id="scan-pickers" class="scan-actions">
+      <button id="scan-camera" class="scan-primary" type="button">후면 카메라로 촬영</button>
+      <button id="scan-gallery" type="button">사진 선택</button>
+    </div>
+    <input id="scan-camera-input" type="file" accept="image/*" capture="environment" hidden>
+    <input id="scan-gallery-input" type="file" accept="image/*" hidden>
+    <img id="scan-preview" alt="선택한 와인 뒷라벨" hidden>
+    <p id="scan-status" role="status" aria-live="polite"></p>
+    <progress id="scan-progress" max="100" value="0" aria-label="글자 읽기 진행률" hidden></progress>
+    <p id="scan-error" role="alert" hidden></p>
+    <div id="scan-result" hidden>
+      <label for="scan-text">읽은 글자 · 직접 수정할 수 있습니다</label>
+      <textarea id="scan-text" rows="8" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+      <p class="scan-hint">산지 찾기는 다음 단계에서 연결됩니다.</p>
+    </div>
+    <div class="scan-actions">
+      <button id="scan-read" class="scan-primary" type="button" hidden>글자 읽기</button>
+      <button id="scan-retake" type="button" hidden>다시 촬영</button>
+      <button id="scan-stop" type="button" hidden>읽기 취소</button>
+      <button id="scan-cancel" type="button">취소</button>
+    </div>
+  </dialog>
   <noscript>산지 탐색에는 JavaScript가 필요합니다.</noscript>
   <script src="atlas-data.js?v=plain-language-1"></script>
   <script src="vendor/leaflet.js"></script>
   <script src="map-geography.js"></script>
   <script src="wine-map.js?v=geographic-2"></script>
   <script src="app.js?v=plain-language-1"></script>
+  <script src="label-scan.js?v=2a-1"></script>
 </body>
 </html>
