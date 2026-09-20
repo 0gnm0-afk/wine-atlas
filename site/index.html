@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wine Atlas · 라벨에서 시작하는 산지 지도</title>
+  <meta name="description" content="와인 라벨의 산지명을 찾아 위치, 환경, 주요 포도와 와인 성격을 빠르게 확인하는 지도.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23712850'/%3E%3Cpath d='M8 7h16l-3 12h-4v6h5v2H10v-2h5v-6h-4z' fill='white'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="vendor/leaflet.css">
+  <link rel="stylesheet" href="style.css?v=plain-language-1">
+</head>
+<body>
+  <header>
+    <a class="brand" href="./" aria-label="Wine Atlas 처음으로"><span>WINE</span> ATLAS</a>
+    <p>라벨의 산지명을 찾고, 한 잔의 배경을 읽는 지도</p>
+    <span class="edition">67 REGIONS</span>
+  </header>
+  <main>
+    <aside class="finder" aria-label="산지 찾기">
+      <div class="finder-head">
+        <p class="eyebrow">LABEL TO PLACE</p>
+        <h1>어디서 온<br>와인일까?</h1>
+        <p class="lede">라벨에 적힌 산지를 검색하면 위치와 맛의 이유를 한 번에 보여줍니다.</p>
+      </div>
+      <label for="region-search">산지명 검색</label>
+      <input id="region-search" type="search" placeholder="예: 샴페인, Napa, 바로사" autocomplete="off">
+      <label for="region-select">또는 목록에서 선택</label>
+      <select id="region-select"></select>
+      <div class="finder-count"><strong>67</strong><span>개 산지<br>모두 위치 표시</span></div>
+      <nav id="search-results" aria-label="검색 결과"></nav>
+      <p class="finder-note">점은 산지를 찾기 위한 대표 위치입니다. 법적 경계나 개별 포도밭의 정확한 모양은 아닙니다.</p>
+    </aside>
+
+    <section class="map-panel" aria-label="산지 지도">
+      <div class="scene-tabs" role="tablist" aria-label="지도 구역">
+        <button type="button" data-scene="west" role="tab">미국 서부 <span>32</span></button>
+        <button type="button" data-scene="europe" role="tab">유럽 <span>31</span></button>
+        <button type="button" data-scene="other" role="tab">그 밖의 산지 <span>4</span></button>
+      </div>
+      <div class="map-heading">
+        <div><p class="eyebrow" id="scene-kicker">WEST COAST</p><h2 id="scene-title">미국 서부 산지</h2></div>
+        <div class="map-actions"><p id="map-caption">큰 산지를 선택하고 확대해 보세요.</p><button id="toggle-zoom" type="button">선택 산지 확대</button><button id="map-reset" type="button">전체 보기</button></div>
+      </div>
+      <nav id="map-views" class="map-views" aria-label="지도 바로 보기"></nav>
+      <div class="map-frame">
+        <div id="atlas-map" class="atlas-map" aria-label="산지 지도 · 방향키 이동, 더하기 빼기로 확대 축소"></div>
+        <span class="map-compass" aria-hidden="true">N<br>↑</span>
+        <span id="map-level" class="map-level">전체 산지</span>
+      </div>
+      <div class="map-key"><span><i></i> 색 면: 개략 분포 · 점: 대표 위치</span><span>드래그 이동 · + / − 확대</span></div>
+    </section>
+
+    <article id="detail" class="detail" aria-live="polite"></article>
+  </main>
+  <noscript>산지 탐색에는 JavaScript가 필요합니다.</noscript>
+  <script src="atlas-data.js?v=plain-language-1"></script>
+  <script src="vendor/leaflet.js"></script>
+  <script src="map-geography.js"></script>
+  <script src="wine-map.js?v=geographic-2"></script>
+  <script src="app.js?v=plain-language-1"></script>
+</body>
+</html>
