@@ -30,3 +30,11 @@ The deployment workflow uses GitHub-maintained `actions/checkout`, `actions/conf
 - Korean model SHA-256: `6b85e11d9bbf07863b97b3523b1b112844c43e713df8b66418a081fd1060b3b2`.
 
 All OCR runtime files are hosted with the site; the application sets explicit same-origin paths and disables language caching and diagnostic logging. The source project's asset lock verifies every OCR file, including binaries, before publication. No CDN or cloud OCR service is used.
+
+## Fuse.js
+
+- Version: 7.1.0, basic browser build (about 18 KB, no dependencies).
+- Source: https://github.com/krisk/Fuse/releases/tag/v7.1.0
+- Distribution: https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.basic.min.js
+- Copyright (c) 2025 Kiro Risk. Apache License 2.0; full text: `site/vendor/LICENSE-Fuse.txt`.
+- Used only for spelling suggestions after exact matching fails. Self-hosted; no search text is sent to a service.

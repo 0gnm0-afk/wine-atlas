@@ -1,0 +1,40 @@
+name: 산지 추가 요청
+description: 라벨에서 찾은 미등록 산지를 검토해 주세요.
+title: "[산지 요청] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        이 Issue의 글과 첨부 사진은 누구나 볼 수 있는 공개 정보입니다.
+        개인정보가 들어 있는 내용은 제외해 주세요. 사진은 원할 때 아래 추가 설명에 직접 첨부할 수 있습니다.
+        앱은 사진이나 OCR 문자열을 자동 전송하지 않습니다. 요청은 운영자 검토를 위한 것이며 산지 데이터는 자동 변경되지 않습니다.
+  - type: textarea
+    id: ocr-text
+    attributes:
+      label: OCR에서 읽힌 문자열
+      description: 앱에서 복사한 글자를 붙여넣어 주세요. 인식되지 않았다면 그 사실을 적어 주세요.
+    validations:
+      required: true
+  - type: input
+    id: region-name
+    attributes:
+      label: 사용자가 수정한 산지명
+      placeholder: 라벨에 적힌 이름을 확인해 주세요.
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: 국가 또는 추정 위치
+      placeholder: 모르면 모름이라고 적어 주세요.
+    validations:
+      required: true
+  - type: input
+    id: wine-producer
+    attributes:
+      label: 와인 또는 생산자명
+  - type: textarea
+    id: details
+    attributes:
+      label: 추가 설명과 사진 (선택)
+      description: 필요하면 이곳에 사진을 직접 첨부하세요. 첨부 사진도 공개됩니다.

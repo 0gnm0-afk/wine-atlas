@@ -135,6 +135,18 @@ zoomButton.addEventListener('click', () => {
 window.addEventListener('hashchange', () => {
   try { showRegion(decodeURIComponent(location.hash.slice(1))); } catch {}
 });
+window.addEventListener('label-region-selected', event => {
+  if (!selectable.some(node => node.region_id === event.detail)) return;
+  document.body.classList.add('scan-selected');
+  showRegion(event.detail);
+  requestAnimationFrame(() => {
+    wineMap.map.invalidateSize();
+    wineMap.focus(nodeMap.get(event.detail));
+    detail.tabIndex = -1;
+    detail.focus({ preventScroll: true });
+    if (matchMedia('(max-width: 720px)').matches) document.querySelector('.map-frame').scrollIntoView({ block: 'start' });
+  });
+});
 
 try {
   const hash = decodeURIComponent(location.hash.slice(1));

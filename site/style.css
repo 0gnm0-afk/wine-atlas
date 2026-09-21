@@ -168,6 +168,25 @@ body:has(#label-scan[open]) { overflow:hidden; }
 }
 
 /* Geographic atlas: local vectors, fixed points, screen-space callout labels. */
+/* Search results share the existing photo dialog, including keyboard-safe actions. */
+#scan-candidates { display:grid; gap:8px; margin:12px 0; }
+#scan-candidates button { width:100%; text-align:left; overflow-wrap:anywhere; }
+#scan-candidates strong, #scan-candidates span { display:block; }
+#scan-candidates span { margin-top:4px; font-size:13px; color:var(--muted); }
+#scan-request { font-size:14px; line-height:1.6; overflow-wrap:anywhere; }
+#scan-issue { display:flex; align-items:center; min-height:44px; box-sizing:border-box; padding:10px 15px; border:1px solid var(--wine); border-radius:5px; color:var(--wine); text-decoration:none; }
+#scan-match-status { scroll-margin-top:70px; }
+#scan-search { flex:1; }
+@media (max-width:720px) {
+  #label-scan[open] { position:fixed; inset:auto 0 auto; top:calc(var(--scan-top, 0px) + 8px); margin:0 auto; height:calc(var(--scan-height, 100dvh) - 16px); max-height:calc(var(--scan-height, 100dvh) - 16px); padding-bottom:0; scroll-padding-bottom:90px; }
+  #label-scan > .scan-actions:last-child { bottom:0; padding-bottom:max(12px, env(safe-area-inset-bottom)); margin-top:16px; }
+  #label-scan > .scan-actions:last-child button { flex:1; padding:10px 8px; font-size:14px; white-space:nowrap; }
+  #label-scan > .scan-actions:last-child #scan-search { flex:1 0 100%; }
+  #scan-text { min-height:110px; height:150px; scroll-margin:64px 0 100px; }
+  #label-scan:has(#scan-text:focus) #scan-read { display:none; }
+  .scan-selected .map-frame, .scan-selected .map-frame .atlas-map { min-height:240px; }
+  #scan-request .scan-actions > * { flex:1 1 140px; justify-content:center; }
+}
 .atlas-map::before, .atlas-map::after { display:none; }
 .map-frame { position:relative; flex:1; margin:0 18px; border:1px solid #c5b89f; min-height:570px; }
 .map-frame .atlas-map { margin:0; min-height:570px; position:absolute; inset:0; }

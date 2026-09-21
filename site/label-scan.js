@@ -38,6 +38,7 @@
     canvas = null;
     camera.value = gallery.value = text.value = '';
     result.hidden = true;
+    clearMatches();
   }
   function status(message, percentage) {
     $('scan-status').textContent = message;
@@ -49,6 +50,7 @@
     $('scan-retake').hidden = !canvas;
     $('scan-stop').hidden = !busy;
     $('scan-progress').hidden = !busy;
+    $('scan-search').hidden = result.hidden || busy;
     dialog.setAttribute('aria-busy', String(busy));
   }
   function reset({ terminate = true } = {}) {
@@ -66,6 +68,41 @@
     $('scan-error').hidden = false;
   }
   function close() { reset(); dialog.close(); }
+
+  function clearMatches() {
+    $('scan-candidates').replaceChildren();
+    $('scan-match-status').textContent = '';
+    $('scan-copy-status').textContent = '';
+    $('scan-request').hidden = true;
+  }
+  function choose(region) {
+    text.blur();
+    close();
+    window.dispatchEvent(new CustomEvent('label-region-selected', { detail: region.id }));
+  }
+  function searchRegions() {
+    if (busy) return;
+    clearMatches();
+    text.blur();
+    const matches = window.RegionMatcher.match(text.value);
+    if (matches.kind === 'exact') { choose(matches.candidates[0]); return; }
+    $('scan-match-status').textContent = matches.kind === 'none'
+      ? '일치하는 산지를 찾지 못했습니다.'
+      : matches.kind === 'multiple' ? '여러 산지가 읽혔습니다. 찾는 산지를 선택해 주세요.' : '비슷한 이름을 찾았습니다. 라벨과 비교해 선택해 주세요.';
+    for (const region of matches.candidates) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      const title = document.createElement('strong'), subtitle = document.createElement('span');
+      title.textContent = region.display_name;
+      subtitle.textContent = `${region.local_name} · 지도에서 보기`;
+      button.append(title, subtitle);
+      button.addEventListener('click', () => choose(region));
+      $('scan-candidates').append(button);
+    }
+    $('scan-request').hidden = false;
+    $('scan-match-status').focus({ preventScroll: true });
+    $('scan-match-status').scrollIntoView({ block: 'start' });
+  }
 
   async function selectPhoto(file) {
     if (!file) return;
@@ -187,6 +224,7 @@
     busy = true;
     text.value = '';
     result.hidden = true;
+    clearMatches();
     $('scan-error').hidden = true;
     controls();
     status('처음에는 글자 읽기 도구를 내려받습니다. 잠시 기다려 주세요.', 0);
@@ -206,7 +244,7 @@
       result.hidden = false;
       status(text.value.trim() ? '글자를 읽었습니다. 틀린 글자는 직접 고쳐 주세요.' : '읽은 글자가 없습니다. 직접 입력하거나 더 선명한 사진으로 다시 시도해 주세요.', 100);
       $('scan-read').textContent = '다시 읽기';
-      text.focus();
+      // Match after busy is cleared below; do not summon the mobile keyboard.
     } catch (error) {
       if (ticket !== generation) return;
       stopWorker();
@@ -214,7 +252,10 @@
       status('사진은 전송되지 않았습니다.');
       $('scan-read').textContent = '다시 시도';
     } finally {
-      if (ticket === generation) { busy = false; controls(); }
+      if (ticket === generation) {
+        busy = false; controls();
+        if (!result.hidden) searchRegions();
+      }
     }
   }
 
@@ -223,6 +264,28 @@
   $('scan-gallery').addEventListener('click', () => gallery.click());
   for (const input of [camera, gallery]) input.addEventListener('change', () => selectPhoto(input.files[0]));
   $('scan-read').addEventListener('click', read);
+  $('scan-search').addEventListener('click', searchRegions);
+  text.addEventListener('input', clearMatches);
+  $('scan-copy').addEventListener('click', async () => {
+    const ticket = generation;
+    try {
+      await navigator.clipboard.writeText(text.value);
+      if (ticket === generation) $('scan-copy-status').textContent = '복사했습니다. GitHub 양식에 직접 붙여넣어 주세요.';
+    } catch {
+      if (ticket !== generation) return;
+      text.focus(); text.select();
+      $('scan-copy-status').textContent = '자동 복사가 차단되었습니다. 선택된 글자를 길게 눌러 복사해 주세요.';
+    }
+  });
+  // Safari's keyboard shrinks the visual viewport, not always the layout viewport.
+  function fitViewport() {
+    if (!window.visualViewport || !dialog.open) return;
+    dialog.style.setProperty('--scan-height', `${window.visualViewport.height}px`);
+    dialog.style.setProperty('--scan-top', `${window.visualViewport.offsetTop}px`);
+  }
+  window.visualViewport?.addEventListener('resize', fitViewport);
+  window.visualViewport?.addEventListener('scroll', fitViewport);
+  $('open-label-scan').addEventListener('click', fitViewport);
   $('scan-retake').addEventListener('click', () => { reset({ terminate: false }); camera.click(); });
   $('scan-stop').addEventListener('click', () => {
     generation++;
